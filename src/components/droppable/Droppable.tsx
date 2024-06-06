@@ -1,9 +1,14 @@
 import React from 'react';
 import {useDroppable} from '@dnd-kit/core';
+import {Item, ItemProps} from "../draggable/Item";
 
-export function Droppable(props: any) {
+type DroppableProps = {
+    id: string,
+    items: ItemProps[]
+}
 
-    // todo: use hook, set id
+export function Droppable(props: DroppableProps) {
+
     const {isOver, setNodeRef} = useDroppable({
         id: props.id,
     });
@@ -17,11 +22,11 @@ export function Droppable(props: any) {
     };
 
 
-    // todo: set refs
     return (
         <div ref={setNodeRef} style={style}>
-            {props.children}
-            {props.text}
+            {props.items.map((item: ItemProps) => {
+               return <Item id={item.id} />
+            })}
         </div>
     );
 }
