@@ -1,15 +1,14 @@
-import React, {useRef} from 'react';
-import {useDraggable} from '@dnd-kit/core';
+import React from 'react';
 import {Item} from "./Item";
-import zIndex from "@mui/material/styles/zIndex";
+import {useSortable} from "@dnd-kit/sortable";
 
 type DraggableProps = {
     id: string,
     isInAlgorithm: boolean
 }
 
-export const Draggable: React.FC<DraggableProps> = (props: DraggableProps) => {
-    const {attributes, listeners, setNodeRef, transform} = useDraggable({
+export const Sortable: React.FC<DraggableProps> = (props: DraggableProps) => {
+    const {attributes, listeners, setNodeRef, transform} = useSortable({
         id: props.id,
         data: {isInAlgorithm: props.isInAlgorithm}
     });
@@ -21,9 +20,9 @@ export const Draggable: React.FC<DraggableProps> = (props: DraggableProps) => {
 
     return (
         <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <Item id={props.id} />
+            <Item id={props.id}/>
         </div>
     );
 };
 
-export default Draggable;
+export default Sortable;

@@ -4,6 +4,7 @@ import {Draggable} from './components/draggable/Draggable';
 import {Stack} from "@mui/material";
 import {Droppable} from "./components/droppable/Droppable";
 import {Item, ItemProps} from "./components/draggable/Item";
+import {arrayMove} from "@dnd-kit/sortable";
 
 function App() {
     const [activeId, setActiveId] = useState("null");
@@ -18,8 +19,8 @@ function App() {
                     Hier ist eine Liste von Bausteinen
                     <Stack direction={"column"}>
                         <Draggable id="one" isInAlgorithm={false}/>
-                        <Draggable id="two" isInAlgorithm={false} />
-                        <Draggable id="three" isInAlgorithm={false} />
+                        <Draggable id="two" isInAlgorithm={false}/>
+                        <Draggable id="three" isInAlgorithm={false}/>
                     </Stack>
                 </div>
                 <div>
@@ -48,7 +49,18 @@ function App() {
         setActive(false);
 
         if (over && !active.data.current.isInAlgorithm) {
-            setItems([...items, {id: active.id + getNumber()}]);
+            const index = items.indexOf(items.find(item => item.id === over.id)!);
+            const newItems = [...items];
+            newItems.splice(index, 0, {id: active.id + getNumber()})
+            setItems(newItems);
+        } else if (over) {
+            if (active.id !== over.id) {
+                setItems((items) => {
+                    const oldIndex = items.indexOf(items.find(item => item.id === active.id)!);
+                    const newIndex = items.indexOf(items.find(item => item.id === over.id)!);
+                    return arrayMove(items, oldIndex, newIndex);
+                });
+            }
         }
     }
 };

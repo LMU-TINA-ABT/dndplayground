@@ -1,7 +1,8 @@
 import React from 'react';
 import {useDroppable} from '@dnd-kit/core';
-import {Item, ItemProps} from "../draggable/Item";
-import Draggable from "../draggable/Draggable";
+import {ItemProps} from "../draggable/Item";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import Sortable from "../draggable/Sortable";
 
 type DroppableProps = {
     id: string,
@@ -15,6 +16,7 @@ export function Droppable(props: DroppableProps) {
     });
 
     const style = {
+        zIndex: 100,
         color: isOver ? 'green' : "black",
         borderStyle: "solid",
         borderColor: isOver ? "green" : "black",
@@ -24,10 +26,12 @@ export function Droppable(props: DroppableProps) {
 
 
     return (
-        <div ref={setNodeRef} style={style}>
-            {props.items.map((item: ItemProps) => {
-               return <Draggable id={item.id} isInAlgorithm={true}/>
-            })}
-        </div>
+        <SortableContext
+            strategy={verticalListSortingStrategy}
+            items={props.items}>
+            {props.items.map(item => <Sortable isInAlgorithm={true} key={item.id} id={item.id}/>)}
+        </SortableContext>
     );
 }
+
+
