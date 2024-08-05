@@ -1,6 +1,7 @@
 import React from 'react';
 import {Item} from "./Item";
 import {useSortable} from "@dnd-kit/sortable";
+import {useDroppable} from "@dnd-kit/core";
 
 type DraggableProps = {
     id: string,
@@ -8,9 +9,13 @@ type DraggableProps = {
 }
 
 export const Sortable: React.FC<DraggableProps> = (props: DraggableProps) => {
-    const {attributes, listeners, setNodeRef, transform} = useSortable({
+    const {attributes, listeners, setNodeRef: useSortableRef, transform} = useSortable({
         id: props.id,
         data: {isInAlgorithm: props.isInAlgorithm}
+    });
+
+    const {setNodeRef: setThirdDroppableRef} = useDroppable({
+        id: "container"
     });
 
     const style = transform ? {
@@ -19,8 +24,10 @@ export const Sortable: React.FC<DraggableProps> = (props: DraggableProps) => {
     } : undefined;
 
     return (
-        <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <Item id={props.id}/>
+        <div style={{backgroundColor: "red"}} ref={setThirdDroppableRef}>
+            <div ref={useSortableRef} style={style} {...listeners} {...attributes}>
+                <Item id={props.id}/>
+            </div>
         </div>
     );
 };

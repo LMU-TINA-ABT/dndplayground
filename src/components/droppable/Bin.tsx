@@ -13,7 +13,7 @@ export function Bin(props: DroppableProps) {
     });
 
     return (
-        <div ref={setSecondDroppableRef}>
+        <div style={{backgroundColor: "green"}} ref={setSecondDroppableRef}>
             <DeleteIcon />
         </div>
     );

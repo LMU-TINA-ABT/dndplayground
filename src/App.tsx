@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {closestCenter, closestCorners, DndContext, DragOverlay} from '@dnd-kit/core';
+import {closestCenter, DndContext, DragOverlay, rectIntersection} from '@dnd-kit/core';
 import {Draggable} from './components/draggable/Draggable';
 import {Stack} from "@mui/material";
 import {Droppable} from "./components/droppable/Droppable";
@@ -12,10 +12,12 @@ function App() {
     const [active, setActive] = useState(true);
     const [items, setItems] = useState<ItemProps[]>([{id: "Start"}]);
     const [number, setNumber] = useState<number>(1);
+    const [myText, setMyText] = useState<string>("start");
 
     return (
-        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} collisionDetection={closestCenter}>
-            <Stack direction={"row"} spacing={6}>
+        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver} collisionDetection={closestCenter}>
+            <div>{myText}</div>
+            <Stack direction={"row"} spacing={6} justifyContent={"space-between"}>
                 <div style={{margin: "25px"}}>
                     Hier ist eine Liste von Bausteinen
                     <Stack direction={"column"}>
@@ -46,6 +48,11 @@ function App() {
     function getNumber() {
         setNumber(number + 1);
         return number;
+    }
+
+    function handleDragOver(event: any) {
+        const {over, active} = event;
+        setMyText(over && over.id ? over.id : "nothing");
     }
 
     function handleDragEnd(event: any) {
