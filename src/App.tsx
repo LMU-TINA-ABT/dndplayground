@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {DndContext, DragOverlay} from '@dnd-kit/core';
+import {closestCenter, closestCorners, DndContext, DragOverlay} from '@dnd-kit/core';
 import {Draggable} from './components/draggable/Draggable';
 import {Stack} from "@mui/material";
 import {Droppable} from "./components/droppable/Droppable";
 import {Item, ItemProps} from "./components/draggable/Item";
 import {arrayMove} from "@dnd-kit/sortable";
+import {Bin} from "./components/droppable/Bin";
 
 function App() {
     const [activeId, setActiveId] = useState("null");
@@ -13,9 +14,9 @@ function App() {
     const [number, setNumber] = useState<number>(1);
 
     return (
-        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} collisionDetection={closestCenter}>
             <Stack direction={"row"} spacing={6}>
-                <div>
+                <div style={{margin: "25px"}}>
                     Hier ist eine Liste von Bausteinen
                     <Stack direction={"column"}>
                         <Draggable id="one" isInAlgorithm={false}/>
@@ -23,8 +24,12 @@ function App() {
                         <Draggable id="three" isInAlgorithm={false}/>
                     </Stack>
                 </div>
-                <div>
+                <div style={{margin: "25px"}}>
                     <Droppable id={"droppable"} items={items}></Droppable>
+                </div>
+                <div style={{margin: "25px"}}>
+                    I am the bin
+                    <Bin id={"bin"}></Bin>
                 </div>
             </Stack>
             <DragOverlay>
@@ -48,12 +53,18 @@ function App() {
 
         setActive(false);
 
-        if (over && !active.data.current.isInAlgorithm) {
+        if (over && over.id === "bin" && active.data.current.isInAlgorithm) {
+            const newItems = [...items];
+            const filteredItems = newItems.filter(item => item.id != active.id);
+            setItems(filteredItems);
+        }
+
+        if (over && over.id !== "bin" && !active.data.current.isInAlgorithm) {
             const index = items.indexOf(items.find(item => item.id === over.id)!);
             const newItems = [...items];
             newItems.splice(index, 0, {id: active.id + getNumber()})
             setItems(newItems);
-        } else if (over) {
+        } else if (over && over.id !== "bin") {
             if (active.id !== over.id) {
                 setItems((items) => {
                     const oldIndex = items.indexOf(items.find(item => item.id === active.id)!);

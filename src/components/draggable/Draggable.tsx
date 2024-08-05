@@ -1,7 +1,6 @@
 import React, {useRef} from 'react';
 import {useDraggable} from '@dnd-kit/core';
 import {Item} from "./Item";
-import zIndex from "@mui/material/styles/zIndex";
 
 type DraggableProps = {
     id: string,
