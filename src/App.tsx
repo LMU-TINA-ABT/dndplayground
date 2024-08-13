@@ -31,7 +31,7 @@ function App() {
 
     return (
         <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver}
-                    collisionDetection={closestCenter} sensors={sensors}>
+                     sensors={sensors}>
             <div>{myText}</div>
             <Stack direction={"row"} spacing={6} justifyContent={"space-between"}>
                 <div style={{margin: "25px"}}>
