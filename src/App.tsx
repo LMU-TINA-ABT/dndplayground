@@ -1,47 +1,61 @@
 import React, {useState} from 'react';
-import {closestCenter, DndContext, DragOverlay, rectIntersection} from '@dnd-kit/core';
-import {Draggable} from './components/draggable/Draggable';
+import {
+    closestCenter,
+    DndContext,
+    DragOverlay,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors
+} from '@dnd-kit/core';
+import {BuildingBlock} from './components/draggable/BuildingBlock';
 import {Stack} from "@mui/material";
-import {Droppable} from "./components/droppable/Droppable";
-import {Item, ItemProps} from "./components/draggable/Item";
-import {arrayMove} from "@dnd-kit/sortable";
+import {AlgorithmContainer} from "./components/droppable/AlgorithmContainer";
+import {ItemProps, MyItem} from "./components/draggable/MyItem";
+import {arrayMove, sortableKeyboardCoordinates} from "@dnd-kit/sortable";
 import {Bin} from "./components/droppable/Bin";
 
 function App() {
     const [activeId, setActiveId] = useState("null");
-    const [active, setActive] = useState(true);
-    const [items, setItems] = useState<ItemProps[]>([{id: "Start"}]);
+    const [isActive, setIsActive] = useState(true);
+    const [items, setItems] = useState<ItemProps[]>([]);
     const [number, setNumber] = useState<number>(1);
     const [myText, setMyText] = useState<string>("start");
 
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates
+        })
+    );
+
     return (
-        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver} collisionDetection={closestCenter}>
+        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver}
+                    collisionDetection={closestCenter} sensors={sensors}>
             <div>{myText}</div>
             <Stack direction={"row"} spacing={6} justifyContent={"space-between"}>
                 <div style={{margin: "25px"}}>
-                    Hier ist eine Liste von Bausteinen
                     <Stack direction={"column"}>
-                        <Draggable id="one" isInAlgorithm={false}/>
-                        <Draggable id="two" isInAlgorithm={false}/>
-                        <Draggable id="three" isInAlgorithm={false}/>
+                        <BuildingBlock id="one" isInAlgorithm={false}/>
+                        <BuildingBlock id="two" isInAlgorithm={false}/>
+                        <BuildingBlock id="three" isInAlgorithm={false}/>
                     </Stack>
                 </div>
                 <div style={{margin: "25px"}}>
-                    <Droppable id={"droppable"} items={items}></Droppable>
+                    <AlgorithmContainer id={"algorithmContainer"} items={items}></AlgorithmContainer>
                 </div>
                 <div style={{margin: "25px"}}>
-                    I am the bin
                     <Bin id={"bin"}></Bin>
                 </div>
             </Stack>
             <DragOverlay>
-                {active ? <Item id={activeId}/> : null}
+                {isActive ? <MyItem isOverlay={true} id={activeId}/> : null}
             </DragOverlay>
         </DndContext>
     );
 
     function handleDragStart(event: any) {
-        setActive(true);
+        setIsActive(true);
         setActiveId(event.active.id);
     }
 
@@ -58,7 +72,7 @@ function App() {
     function handleDragEnd(event: any) {
         const {over, active} = event;
 
-        setActive(false);
+        setIsActive(false);
 
         if (over && over.id === "bin" && active.data.current.isInAlgorithm) {
             const newItems = [...items];
@@ -69,7 +83,7 @@ function App() {
         if (over && over.id !== "bin" && !active.data.current.isInAlgorithm) {
             const index = items.indexOf(items.find(item => item.id === over.id)!);
             const newItems = [...items];
-            newItems.splice(index, 0, {id: active.id + getNumber()})
+            newItems.splice(index, 0, {id: active.id + getNumber(), isOverlay:false})
             setItems(newItems);
         } else if (over && over.id !== "bin") {
             if (active.id !== over.id) {

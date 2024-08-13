@@ -8,13 +8,13 @@ type DroppableProps = {
 
 export function Bin(props: DroppableProps) {
 
-    const {setNodeRef: setSecondDroppableRef} = useDroppable({
+    const {isOver, setNodeRef: setSecondDroppableRef} = useDroppable({
         id: props.id
     });
 
     return (
-        <div style={{backgroundColor: "green"}} ref={setSecondDroppableRef}>
-            <DeleteIcon />
+        <div ref={setSecondDroppableRef}>
+            <DeleteIcon sx={{ fontSize: 250, color: isOver ? "red" : "grey"}}/>
         </div>
     );
 }
