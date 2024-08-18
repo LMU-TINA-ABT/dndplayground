@@ -4,13 +4,14 @@ import {MyItem} from "./MyItem";
 
 type DraggableProps = {
     id: string,
-    isInAlgorithm: boolean
+    isInAlgorithm: boolean,
+    type: "blue" | "yellow" | "green" | "pink"
 }
 
 export const BuildingBlock: React.FC<DraggableProps> = (props: DraggableProps) => {
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id: props.id,
-        data: {isInAlgorithm: props.isInAlgorithm}
+        data: {isInAlgorithm: props.isInAlgorithm, type: props.type}
     });
 
     const style = transform ? {
@@ -20,7 +21,7 @@ export const BuildingBlock: React.FC<DraggableProps> = (props: DraggableProps) =
 
     return (
         <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            <MyItem id={props.id} isOverlay={false} />
+            <MyItem id={props.id} isOverlay={false} type={props.type}/>
         </div>
     );
 };

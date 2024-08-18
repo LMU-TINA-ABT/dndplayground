@@ -6,7 +6,8 @@ import {CSS} from '@dnd-kit/utilities';
 type DraggableProps = {
     id: string,
     isInAlgorithm: boolean,
-    isNonDraggable?: boolean
+    isNonDraggable?: boolean,
+    type: "blue" | "yellow" | "green" | "pink"
 }
 
 export const AlgorithmBlock: React.FC<DraggableProps> = (props: DraggableProps) => {
@@ -31,7 +32,7 @@ export const AlgorithmBlock: React.FC<DraggableProps> = (props: DraggableProps) 
 
     return (
         <div ref={useAlgorithmBlockRef} style={style} {...attributes} {...listeners}>
-            <MyItem isOverlay={false} id={props.id} isOver={isOver}/>
+            <MyItem isOverlay={false} id={props.id} isOver={isOver} type={props.type}/>
         </div>
     );
 };

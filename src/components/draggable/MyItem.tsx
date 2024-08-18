@@ -3,18 +3,19 @@ export type ItemProps = {
     id: string;
     isOverlay: boolean;
     isOver?: boolean;
+    type: "blue" | "yellow" | "green" | "pink"
 }
 
 export const MyItem: React.FC<ItemProps> = (props: ItemProps) => {
 
     function getBackgroundColor() {
-        if (props.isOverlay) {
-            return "grey";
-        } else if (props.isOver) {
-            return "red";
-        } else {
-            return "white";
-        }
+        // if (props.isOverlay) {
+        //     return "grey";
+        // } else if (props.isOver) {
+        //     return "red";
+        // } else {
+            return props.type;
+        // }
     }
 
     const style = {
@@ -25,8 +26,7 @@ export const MyItem: React.FC<ItemProps> = (props: ItemProps) => {
         alignItems: "center",
         justifyContent: "center",
         border: "1px solid black",
-        margin: "10px 0",
-        background: "white"
+        margin: "10px 0"
     };
 
     return(

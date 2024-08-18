@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-    closestCenter,
     DndContext,
     DragOverlay,
     KeyboardSensor,
@@ -17,6 +16,7 @@ import {Bin} from "./components/droppable/Bin";
 
 function App() {
     const [activeId, setActiveId] = useState("null");
+    const [activeType, setActiveType] = useState<"blue" | "yellow" | "green" | "pink">("pink");
     const [isActive, setIsActive] = useState(true);
     const [items, setItems] = useState<ItemProps[]>([]);
     const [number, setNumber] = useState<number>(1);
@@ -36,9 +36,9 @@ function App() {
             <Stack direction={"row"} spacing={6} justifyContent={"space-between"}>
                 <div style={{margin: "25px"}}>
                     <Stack direction={"column"}>
-                        <BuildingBlock id="one" isInAlgorithm={false}/>
-                        <BuildingBlock id="two" isInAlgorithm={false}/>
-                        <BuildingBlock id="three" isInAlgorithm={false}/>
+                        <BuildingBlock id="one" isInAlgorithm={false} type={"blue"}/>
+                        <BuildingBlock id="two" isInAlgorithm={false} type={"yellow"}/>
+                        <BuildingBlock id="three" isInAlgorithm={false} type={"green"}/>
                     </Stack>
                 </div>
                 <div style={{margin: "25px"}}>
@@ -49,13 +49,14 @@ function App() {
                 </div>
             </Stack>
             <DragOverlay>
-                {isActive ? <MyItem isOverlay={true} id={activeId}/> : null}
+                {isActive ? <MyItem isOverlay={true} id={activeId} type={activeType}/> : null}
             </DragOverlay>
         </DndContext>
     );
 
     function handleDragStart(event: any) {
         setIsActive(true);
+        setActiveType(event.active.data.current.type);
         setActiveId(event.active.id);
     }
 
@@ -74,6 +75,8 @@ function App() {
 
         setIsActive(false);
 
+        const isTop = active?.rect?.current?.translated?.top > over?.rect?.top;
+
         if (over && over.id === "bin" && active.data.current.isInAlgorithm) {
             const newItems = [...items];
             const filteredItems = newItems.filter(item => item.id != active.id);
@@ -83,7 +86,7 @@ function App() {
         if (over && over.id !== "bin" && !active.data.current.isInAlgorithm) {
             const index = items.indexOf(items.find(item => item.id === over.id)!);
             const newItems = [...items];
-            newItems.splice(index, 0, {id: active.id + getNumber(), isOverlay:false})
+            newItems.splice(index, 0, {id: active.id + getNumber(), isOverlay:false, type: activeType})
             setItems(newItems);
         } else if (over && over.id !== "bin") {
             if (active.id !== over.id) {
