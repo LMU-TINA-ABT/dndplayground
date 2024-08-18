@@ -18,6 +18,7 @@ function App() {
     const [activeId, setActiveId] = useState("null");
     const [activeType, setActiveType] = useState<"blue" | "yellow" | "green" | "pink">("pink");
     const [isActive, setIsActive] = useState(true);
+    const [isNewItem, setIsNewItem] = useState(true);
     const [items, setItems] = useState<ItemProps[]>([]);
     const [number, setNumber] = useState<number>(1);
     const [myText, setMyText] = useState<string>("start");
@@ -49,13 +50,14 @@ function App() {
                 </div>
             </Stack>
             <DragOverlay>
-                {isActive ? <MyItem isOverlay={true} id={activeId} type={activeType}/> : null}
+                {isActive && isNewItem ? <MyItem isOverlay={true} id={activeId} type={activeType}/> : null}
             </DragOverlay>
         </DndContext>
     );
 
     function handleDragStart(event: any) {
         setIsActive(true);
+        setIsNewItem(["one", "two", "three"].includes(event.active.id) ? true : false);
         setActiveType(event.active.data.current.type);
         setActiveId(event.active.id);
     }
@@ -74,20 +76,22 @@ function App() {
         const {over, active} = event;
 
         setIsActive(false);
-
-        const isTop = active?.rect?.current?.translated?.top > over?.rect?.top;
-
         if (over && over.id === "bin" && active.data.current.isInAlgorithm) {
             const newItems = [...items];
             const filteredItems = newItems.filter(item => item.id != active.id);
             setItems(filteredItems);
         }
 
+        // add new item to list
         if (over && over.id !== "bin" && !active.data.current.isInAlgorithm) {
-            const index = items.indexOf(items.find(item => item.id === over.id)!);
+            let index = items.indexOf(items.find(item => item.id === over.id)!);
+            const isTop = active?.rect?.current?.translated?.top > over?.rect?.top;
+            const isBottom = index === -1;
+            index = isBottom ? items.length : isTop? index + 1 : index;
             const newItems = [...items];
             newItems.splice(index, 0, {id: active.id + getNumber(), isOverlay:false, type: activeType})
             setItems(newItems);
+            // rearrange items in list
         } else if (over && over.id !== "bin") {
             if (active.id !== over.id) {
                 setItems((items) => {
