@@ -85,9 +85,9 @@ function App() {
         // add new item to list
         if (over && over.id !== "bin" && !active.data.current.isInAlgorithm) {
             let index = items.indexOf(items.find(item => item.id === over.id)!);
-            const isTop = active?.rect?.current?.translated?.top > over?.rect?.top;
-            const isBottom = index === -1;
-            index = isBottom ? items.length : isTop? index + 1 : index;
+            const isTop = active?.rect?.current?.translated?.top < over?.rect?.top;
+            const isInBox = index === -1;
+            index = isInBox ? isTop ? 0 : items.length : isTop? index : index + 1;
             const newItems = [...items];
             newItems.splice(index, 0, {id: active.id + getNumber(), isOverlay:false, type: activeType})
             setItems(newItems);

@@ -27,7 +27,7 @@ export const MyItem: React.FC<ItemProps> = (props: ItemProps) => {
         justifyContent: "center",
         border: "1px solid black",
         margin: "10px 0",
-        cursor: "grabbing"
+        cursor: "grab"
     };
 
     return(

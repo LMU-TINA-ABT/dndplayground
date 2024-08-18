@@ -32,7 +32,6 @@ export function AlgorithmContainer(props: DroppableProps) {
             items={props.items}
         >
             <Stack ref={setNodeRef} style={style} direction={"column"} justifyContent={"flex-start"}>
-                <AlgorithmBlock isNonDraggable={false} isInAlgorithm={true} key={"start"} id={"start"} type={"pink"}/>
                 {props.items.map(item => <AlgorithmBlock isInAlgorithm={true} key={item.id} id={item.id} type={item.type}/>)}
             </Stack>
         </SortableContext>
